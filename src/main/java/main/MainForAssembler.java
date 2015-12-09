@@ -6,6 +6,9 @@ import java.io.InputStreamReader;
 
 import spring.AlreadyExistingMemberException;
 import spring.Assembler;
+import spring.ChangePasswordService;
+import spring.IdPasswordNotMachingException;
+import spring.MemberNotFoundException;
 import spring.MemberRegisterService;
 import spring.RegisterRequest;
 
@@ -74,6 +77,22 @@ public class MainForAssembler {
 	}
 	
 	private static void processChangeCommand(String[] args){
+		if(args.length != 4){
+			printHelp();
+			return;
+		}
 		
+		ChangePasswordService changePwdSvc = assembler.getPwdSvc();
+		
+		try{
+			changePwdSvc.changePassword(args[1], args[2], args[3]);
+			System.out.println("암호를 변경했습니다.\n");
+		}
+		catch(MemberNotFoundException err){
+			System.out.println("존재하지 않는 이메일입니다.\n");
+		}
+		catch(IdPasswordNotMachingException err){
+			System.out.println("이메일과 암호가 일치하지 않습니다.\n");
+		}
 	}
 }
