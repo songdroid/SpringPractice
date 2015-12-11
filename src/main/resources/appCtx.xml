@@ -19,4 +19,9 @@
 		<constructor-arg ref="memberDao"></constructor-arg>
 		<constructor-arg ref="memberPrinter"></constructor-arg>
 	</bean>
+	
+	<bean id="infoPrinter" class="spring.MemberInfoPrinter">
+		<property name="memberDao" ref="memberDao"></property>
+		<property name="printer" ref="memberPrinter"></property>
+	</bean>
 </beans>
