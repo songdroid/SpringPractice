@@ -11,6 +11,8 @@ import java.util.List;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 public class MemberDao {
 	private	static long nextId = 0;
@@ -40,17 +42,22 @@ public class MemberDao {
 	}
 
 	public void insert(final Member member){
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				String sql = "insert into MEMBER(EMAIL, PASSWORD, NAME, REGDATE) values(?, ?, ?, ?)";
-				PreparedStatement pstmt = con.prepareStatement(sql);
+				PreparedStatement pstmt = con.prepareStatement(sql, new String[]{"ID"});
 				pstmt.setString(1, member.getEmail());
 				pstmt.setString(2, member.getPassword());
 				pstmt.setString(3, member.getName());
 				pstmt.setTimestamp(4, new Timestamp(member.getRegisterDate().getTime()));
 				return pstmt;
 			}
-		}, 두번째 인자);
+		}, keyHolder);
+		
+		Number keyValue = keyHolder.getKey();
+		member.setId(keyValue.longValue());
 	}
 	
 	public void update(Member member){
